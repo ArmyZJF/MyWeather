@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,11 +99,19 @@ public class ChooesAreaFragment extends Fragment {
                     queryCountries();
                 }else if (currentLevel == LEVEL_COUNTRY){
                     String weatherId = countryList.get(position).getWeatherId();
-                    Intent intent = new Intent(getActivity(), WeatherAcitvity.class);
-                    intent.putExtra("weather_id",weatherId);
-                    Log.d(TAG, "onItemClick: frefs存入weather_id成功");
-                    startActivity(intent);
-                    getActivity().finish();
+                    if (getActivity() instanceof MainActivity){
+                        Intent intent = new Intent(getActivity(), WeatherAcitvity.class);
+                        intent.putExtra("weather_id",weatherId);
+                        Log.d(TAG, "onItemClick: frefs存入weather_id成功");
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if (getActivity() instanceof WeatherAcitvity){
+                        WeatherAcitvity activity = (WeatherAcitvity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
                 }
             }
         });
